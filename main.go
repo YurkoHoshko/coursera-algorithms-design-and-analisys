@@ -1,19 +1,33 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/YurkoHoshko/coursera/week1"
+	"os"
+	"strconv"
 )
 
 func main() {
-	unsortedArray := []int{2, 4, 6, 1, 3, 5}
-	sortedArray, inversions := week1.FindInversions(unsortedArray)
-	var inversionsCount int
+	runWeek1()
+}
 
-	for _, v := range inversions {
-		inversionsCount += len(v)
+func runWeek1() {
+	unsortedArray := []int{}
+	file, err := os.Open("resources/ProgrammingTask1.txt")
+	if err != nil {
+		panic(err)
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanWords)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		number, _ := strconv.Atoi(line)
+		unsortedArray = append(unsortedArray, number)
 	}
 
+	sortedArray, inversionsCount := week1.FindInversions(unsortedArray)
 	fmt.Println("Input array: ", unsortedArray)
 	fmt.Println("Sorted array: ", sortedArray)
 	fmt.Println("Count of inversions:", inversionsCount)

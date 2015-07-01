@@ -1,7 +1,7 @@
 package week1
 
-func FindInversions(arr []int) ([]int, map[int][]int) {
-	allInversions := make(map[int][]int)
+func FindInversions(arr []int) ([]int, int) {
+	allInversions := 0
 	if len(arr) <= 1 {
 		return arr, allInversions
 	}
@@ -14,16 +14,14 @@ func FindInversions(arr []int) ([]int, map[int][]int) {
 	wholeArray, splitInversions := sortAndFindSplitInversions(leftPart, rightPart)
 
 	// merge all inversions into one map
-	for _, elem := range arr {
-		allInversions[elem] = append(leftInversions[elem], rightInversions[elem]...)
-		allInversions[elem] = append(allInversions[elem], splitInversions[elem]...)
-	}
+	allInversions = leftInversions + rightInversions + splitInversions
+
 	return wholeArray, allInversions
 }
 
-func sortAndFindSplitInversions(leftPart, rightPart []int) ([]int, map[int][]int) {
+func sortAndFindSplitInversions(leftPart, rightPart []int) ([]int, int) {
 	resultArray := make([]int, len(leftPart)+len(rightPart))
-	inversions := make(map[int][]int)
+	inversions := 0
 
 	i, j := 0, 0
 	for k := range resultArray {
@@ -34,11 +32,6 @@ func sortAndFindSplitInversions(leftPart, rightPart []int) ([]int, map[int][]int
 			continue
 		} else if j >= len(rightPart) {
 			resultArray[k] = leftPart[i]
-			_, ok := inversions[leftPart[i]]
-			// add inversions only if they were not added yet
-			if !ok {
-				inversions[leftPart[i]] = append(inversions[leftPart[i]], rightPart...)
-			}
 			i++
 			continue
 		}
@@ -46,7 +39,7 @@ func sortAndFindSplitInversions(leftPart, rightPart []int) ([]int, map[int][]int
 		// default condition
 		if leftPart[i] > rightPart[j] {
 			resultArray[k] = rightPart[j]
-			inversions[leftPart[i]] = append(inversions[leftPart[i]], rightPart[j])
+			inversions += len(leftPart) - i
 			j++
 		} else {
 			resultArray[k] = leftPart[i]
